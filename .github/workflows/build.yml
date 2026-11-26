@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: unzip -q AutoClicker.zip
+      - run: unzip -q AutoClickerPro.zip
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -19,8 +19,14 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: 8.7
-      - run: cd AutoClicker && gradle assembleDebug --no-daemon
+      - name: Unit tests
+        working-directory: AutoClickerPro
+        continue-on-error: true
+        run: gradle testDebugUnitTest --no-daemon
+      - name: Build APK
+        working-directory: AutoClickerPro
+        run: gradle assembleDebug --no-daemon
       - uses: softprops/action-gh-release@v2
         with:
-          tag_name: build-${{ github.run_number }}
-          files: AutoClicker/app/build/outputs/apk/debug/app-debug.apk
+          tag_name: pro-${{ github.run_number }}
+          files: AutoClickerPro/app/build/outputs/apk/debug/app-debug.apk
